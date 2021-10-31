@@ -1,6 +1,6 @@
 import os
 import click
-from utils.custom_cli import CustomCLI
+from utils import CustomCLI
 
 @click.command(cls=CustomCLI,
                path=os.path.dirname(__file__),
