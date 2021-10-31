@@ -1,49 +1,47 @@
 import click
-import logging
 import os
 
-logger = logging.getLogger(__name__)
-
+# custom multi-commands:
+# https://click.palletsprojects.com/en/latest/commands/#custom-multi-commands
 class CustomCLI(click.MultiCommand):
-    """Complex Group initiator
-    """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
-        self.plugin_folder = os.path.join(os.path.dirname(__file__), 'commands')
+    def __init__(self, path, dir_name, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.command_dir = os.path.join(path, dir_name)
 
     def list_commands(self, ctx):
+        """
+        Override list_commands from inherited class
+
+        :param ctx(click.Context): context
+        """
         rv = []
-        for filename in os.listdir(self.plugin_folder):
-            if filename.endswith('.py') and filename != '__init__.py':
-                rv.append(filename[:-3])
+        for filename in os.listdir(self.command_dir):
+            if filename.startswith("cmd_") \
+                and filename.endswith(".py"):
+                rv.append(filename[4:-3])
         rv.sort()
         return rv
 
-    def get_command(self, ctx: click.Context, cmd_name: str):
+    def get_command(self, ctx, cmd_name):
         """
         Override get_command from inherited class
 
-        :param ctx: context
-        :param cmd_name: command name
-        """
-        #print(cmd_name)
-        #import_path = self.plugin_folder.replace('/', '.').strip('.')
-        #mod = __import__("utils.commands" + "." + cmd_name, fromlist=['cli'])
-        #print(dir(mod))
-        #print(type(mod))
-        #return mod.cli
-
+        :param ctx(click.Context): context
+        :param cmd_name(str): command name
+        """     
         ns = {}
-        fn = os.path.join(self.plugin_folder, cmd_name + '.py')
-        with open(fn) as f:
-            code = compile(f.read(), fn, 'exec')
+        filename = os.path.join(self.command_dir, "cmd_" + cmd_name + '.py')
+        with open(filename) as fn:
+            # compile
+            # https://docs.python.org/3/library/functions.html#compile
+            code = compile(fn.read(), filename, "exec")
+            # eval
+            # https://docs.python.org/3/library/functions.html#eval
+            # here is a good explanation of eval parameters:
+            # https://www.geeksforgeeks.org/eval-in-python/
+            # None is returned because of exec argument in compile
             eval(code, ns, ns)
+        # builtins are inserted in globals dictionary
+        # cli is the function name in command script
         return ns['cli']
-
-
-
-
-
-
-
