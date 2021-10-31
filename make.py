@@ -14,6 +14,7 @@ def cli(ctx, debug):
     This is a subcommands wrapper
     """
     # ensure ctx.obj exists and a dict type
+    # https://click.palletsprojects.com/en/latest/commands/#nested-handling-and-contexts
     ctx.ensure_object(dict)
     ctx.obj["DEBUG"] = debug
 
