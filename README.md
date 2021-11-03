@@ -16,3 +16,8 @@ python make.py peach --help
 python make.py --debug apple -fc red 5
 python make.py --debug peach -bc blue 5
 ```
+
+Or make script executable with shabang `#!/usr/bin/env python`:
+```bash
+./make.py --help
+```
