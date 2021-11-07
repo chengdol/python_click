@@ -12,7 +12,7 @@ def cli(ctx, count, bg_color):
     """
     debug = ctx.obj["DEBUG"] if ctx.obj else None
     if debug:
-        click.secho("Debug is enabled!", bg=bg_color)
+        click.echo(click.style("Debug", bg=bg_color) + " is enabled!")
     for idx in range(count):
         click.secho(f"loop {idx + 1}", bg=bg_color)
 
